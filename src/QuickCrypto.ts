@@ -1,5 +1,6 @@
 import * as pbkdf2 from './pbkdf2';
 import * as random from './random';
+import { subtle } from './subtle';
 import {
   createCipher,
   createCipheriv,
@@ -32,6 +33,7 @@ export const QuickCrypto = {
   generateKeyPairSync,
   createSign,
   createVerify,
+  subtle,
   constants,
   ...pbkdf2,
   ...random,

@@ -1,5 +1,16 @@
 import { Buffer } from '@craftzdog/react-native-buffer';
 
+export type KeyUsages = Array<
+  'encrypt' | 'decrypt'
+  // | 'wrapKey' | 'unwrapKey'
+>;
+
+// The maximum buffer size that we'll support in the WebCrypto impl
+const kMaxBufferLength = 2 ** 31 - 1;
+
+export type KAesKeyLength = 128 | 192 | 256;
+export const kAesKeyLengths = [128, 192, 256];
+
 export type BinaryLike = string | ArrayBuffer | Buffer;
 
 export type BinaryToTextEncoding = 'base64' | 'base64url' | 'hex' | 'binary';
@@ -241,5 +252,56 @@ export function validateUint32(
     throw new Error(
       `Invalid argument - ${name} out of range >= ${min} && <= ${max}: ${value}`
     );
+  }
+}
+
+export function validateMaxBufferLength(data: Buffer, name: string) {
+  if (data.byteLength > kMaxBufferLength) {
+    throw new Error(`${name} must be less than ${kMaxBufferLength + 1} bits`);
+  }
+}
+
+export function validateByteLength(buf: Buffer, name: string, target: number) {
+  if (buf.byteLength !== target) {
+    throw new Error(`${name} must contain exactly ${target} bytes`);
+  }
+}
+
+export function hasAnyNotIn(set: Set<any>, checks: Array<any>) {
+  for (const s of set) if (!checks.includes(s)) return true;
+  return false;
+}
+
+export function validateInteger(
+  val: number,
+  label: string,
+  min: number = -2147483648,
+  max: number = 2147483647
+) {
+  if (typeof val !== 'number') {
+    throw new Error(`${label} = ${val} is not a number`);
+  }
+  if (!Number.isInteger(val)) {
+    throw new Error(`${label} = ${val} it not an integer`);
+  }
+  if (val < min || val > max) {
+    throw new Error(`${label} = ${val} is out of range >= ${min} && <= ${max}`);
+  }
+}
+
+export function validateOneOf(
+  val: number,
+  label: string,
+  min: number = -2147483648,
+  max: number = 2147483647
+) {
+  if (typeof val !== 'number') {
+    throw new Error(`${label} = ${val} is not a number`);
+  }
+  if (!Number.isInteger(val)) {
+    throw new Error(`${label} = ${val} it not an integer`);
+  }
+  if (val < min || val > max) {
+    throw new Error(`${label} = ${val} is out of range >= ${min} && <= ${max}`);
   }
 }
